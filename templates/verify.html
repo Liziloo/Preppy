@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <form class="text-center" action="/verify" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="token" placeholder="Token" type="text" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <p class="mt-2">Expired? <a href="/forgot">Send a new token</a></p>
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your Suggested Go-Bag (Alter to suit your specific needs.)
+{% endblock %}
+
+{% block main %}
+    <h1>Design Your Go-Bag</h1>
+    <p class="lead">We've selected some emergencies based on what the <a href="https://www.redcross.org/get-help/how-to-prepare-for-emergencies/common-natural-disasters-across-us.html">American Red Cross</a> suggests is most likely in your region, but feel free to customize based on situations you believe you're most likely to face. Toggling a disaster will toggle or untoggle the associated supplies. Even if an item is not suggested based on the type of disaster, you may add it to your go-bag checklist by toggling it independently of any disaster. Once you've selected all the supplies you'd like to include, submit the form to see your personalized go-bag.</p>
+
+<!-- Checkboxes for situations you'd like to be prepared for -->
+    <h3 class="my-3">Possible Disaster Types</h3>
+
+    <div class="row row-cols-md-3 row-cols-lg-4 row-gap-1">
+        {% for sit, sit_info in sits.items() %}
+            <div class="form-check form-switch col-auto">
+                <input class="form-check-input disaster" type="checkbox" id="{{ sit }}" {% if sit_info['checked'] %}checked{% endif %} data-supplies="{{ sit_info['items']|join(', ')}}">
+                <label class="form-check-label" for="{{ sit }}">{{ sit|replace("_", " ") }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+<!-- Checklist generated based on family information with option to add or delete items. Should also let you print or email. -->
+    <h3 class="my-3">Suggested Go-Bag Supplies</h3>
+    <form action="/postbuild" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row row-cols-md-3 row-cols-lg-4 row-gap-1 mb-3">
+            {% for supply in supplies %}
+                <div class="col-auto form-check form-switch">
+                    <input class="form-check-input supply" type="checkbox" value="{{ supply }}" name="supply" id="{{ supply }}">
+                    <label class="form-check-label" for="{{ supply }}">{{ supply|replace("_", " ") }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-3">
+            <p class="text-danger">Caution! If you've already designed your go-bag, clicking "Save" will clear all your progress.</p>
+            <button class="btn btn-primary" id="save">Submit</button>
+        </div>
+    </form>
+
+
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/disasterSupplies.js') }}"></script>
+{% endblock %}

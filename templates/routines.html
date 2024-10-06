@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ last_name }} Weekly Schedules
+{% endblock %}
+
+{% block main %}
+
+    <h1>{{ last_name }} Routine Schedule</h1>
+    <div class="no-print">
+        <p class="lead">Keep track of the locations everyone in your household typically visits during the week. Make sure to note location addresses. Keep a printout of these locations and times in case you need to find someone in a hurry and you can't reach them by phone.</p>
+
+        <p class="lead">Add each member of your household to the calendar below. Then enter their usual schedule in the calendar. The schedule will automatically be color-coded by person.</p>
+    </div>
+
+
+<!-- Calendar functionality provided by FullCalendar (https://fullcalendar.io/) -->
+    <script nonce="{{ nonce }}" src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>
+
+<!-- Add a person button -->
+    <form action="/add_family" class="mb-2 no-print" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Add a family member: </label>
+        <input type="text" name="name" placeholder="Name" required>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+<!-- Delete person -->
+    <form class="mb-2 no-print" action="/delete_family" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Delete existing family member: </label>
+        <select name="name" required>
+            <option disabled selected value="">Name</option>
+            {% for result in results %}
+                <option value="{{ result.name }}">{{ result.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-danger">Submit</button>
+    </form>
+
+    <div class="border border-primary" id="calendar"></div>
+
+    <div class="no-print">
+        <button class="btn btn-info my-2 btn-print">Print</button>
+    </div>
+
+    <footer>
+        Calendar functionality provided by <a href="https://fullcalendar.io/" target="_blank">FullCalendar</a>.
+    </footer>
+
+<!-- Event modal -->
+    <div class="modal fade" tabindex="-1" id="eventModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title">Event Details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/add_event" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" id="eventId" name="eventId">
+                        <div class="form-group row">
+                            <div class="col">
+                                <input class="form-control" id="eventTitle" type="text" name="title" placeholder="Event title" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <input class="form-control address" type="text" id="eventAddress" name="address" placeholder="Address" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-auto">
+                                <select class="form-select" id="eventPerson" name="person_id" required>
+                                    <option disabled selected value="">Name</option>
+                                    {% for result in results %}
+                                        <option value="{{ result.id }}">{{ result.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-auto">
+                                <select class="form-select" name="startDay" id="eventStartDay" required>
+                                    <option disabled selected value="">Day</option>
+                                    <option value="2024-08-11">Sunday</option>
+                                    <option value="2024-08-12">Monday</option>
+                                    <option value="2024-08-13">Tuesday</option>
+                                    <option value="2024-08-14">Wednesday</option>
+                                    <option value="2024-08-15">Thursday</option>
+                                    <option value="2024-08-16">Friday</option>
+                                    <option value="2024-08-17">Saturday</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control" name="startTime" type="time" id="eventStartTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-auto">
+                                <select class="form-select" name="endDay" id="eventEndDay" required>
+                                    <option disabled selected value="">Day</option>
+                                    <option value="2024-08-11">Sunday</option>
+                                    <option value="2024-08-12">Monday</option>
+                                    <option value="2024-08-13">Tuesday</option>
+                                    <option value="2024-08-14">Wednesday</option>
+                                    <option value="2024-08-15">Thursday</option>
+                                    <option value="2024-08-16">Friday</option>
+                                    <option value="2024-08-17">Saturday</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control" name="endTime" type="time" id="eventEndTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <textarea class="form-control" id="eventDescription" name="description" placeholder="Description"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <form action="/delete_event" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="id" value="deleteEvent">
+                        <input type="hidden" id="deleteEvent" name="eventId">
+                        <button type="submit" class="btn btn-danger">Delete Event</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+
+
+        <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/print.js') }}"></script>
+
+    <!-- Pass events to js -->
+        <script nonce="{{ nonce }}">
+            var events = {{ events | tojson | safe }};
+        </script>
+
+        <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+
+
+
+{% endblock %}

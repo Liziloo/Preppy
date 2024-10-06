@@ -1,0 +1,152 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ last_name }} Medical Providers
+{% endblock %}
+
+{% block main %}
+
+    <h1 class="mb-4">{{ last_name }} Medical Providers</h1>
+    <p class="lead no-print">Here you can store and print the contact details for all of your household's medical providers.</p>
+    <div class="table-responsive">
+        <table class="table table-primary table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Doctor for</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result.first_name }}</td>
+                        <td>{{ result.last_name }}</td>
+                        <td>{{ result.patient }}</td>
+                        <td>{{ result.phone }}</td>
+                        <td>{{ result.address }}</td>
+                        <td class="no-print">
+                            <button class="btn btn-info btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ result.id }}" data-first-name="{{ result.first_name }}" data-last-name="{{ result.last_name}}" data-patient="{{ result.patient }}" data-phone="{{ result.phone }}" data-address="{{ result.address }}">Edit</button>
+                        </td>
+                        <td class="no-print">
+                            <form action="delete_provider" class="form-delete" method="post">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="person_id" value="{{ result.id }}">
+                                <button type="submit" class="btn btn-danger" value="Delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-info mb-4 no-print btn-print">Print</button>
+
+<!-- Add new provider -->
+    <div class="no-print">
+        <form class="p-2 border border-info w-auto rounded d-inline-block" action="/add_provider" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h5>Add Provider</h5>
+            <div class="form-group row">
+                <div class="col-auto">
+                    <label class="form-label" for="patient">Patient(s): </label>
+                    <input class="form-control" id="patient" name="patient" type="text" placeholder="Name of patient(s)">
+                </div>
+                <div class="col">
+                    <label class="form-label" for="first_name">Provider First Name: </label>
+                    <input id="first_name" class="form-control" name="first_name" type="text" placeholder="First Name">
+                </div>
+                <div class="col">
+                    <label class="form-label" for="last_name">Provider Last Name: </label>
+                    <input id="last_name" class="form-control" name="last_name" type="text" placeholder="Last Name" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label class="form-label" for="phone">Phone Number: </label>
+                    <input id="phone" class="form-control" type="tel" name="phone" placeholder="555-555-5555" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label class="form-label" for="address">Address: </label>
+                    <input id="address" class="form-control address" name="address" type="text" required>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit" id="save">Add Provider</button>
+        </form>
+    </div>
+
+
+
+<!-- Edit Modal -->
+    <div id="editModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title">Edit Provider</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="/edit_provider" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="edit">
+                        <input type="hidden" name="person_id" id="editPerson_id">
+                        <div class="form-group row">
+                            <div class="col-auto">
+                                <label class="form-label" for="editFirst_name">First Name: </label>
+                                <input class="form-control" type="text" name="first_name" id="editFirst_name">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label" for="editLast_name">Last Name: </label>
+                                <input class="form-control" type="text" name="last_name" id="editLast_name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <label class="form-label" for="editPatient">Patient(s): </label>
+                                <input class="form-control" type="text" name="patient" id="editPatient">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <label class="form-label" for="editPhone">Phone: </label>
+                                <input class="form-control" type="tel" name="phone" id="editPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <label class="form-label" for="editAddress">Address: </label>
+                                <input class="form-control" type="text" name="address" id="editAddress" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" value="Save">Save</button>
+                        <button class="btn" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/providers.js') }}"></script>
+
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/print.js') }}"></script>
+
+
+<!-- Load Google Maps Javascript API -->
+    <div id="api-key" data-key="{{ api_key }}"></div>
+    <script nonce="{{ nonce }}">
+        const apiKey = "{{ api_key }}";
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/mapsApi.js') }}"></script>
+<!-- Load address javascript -->
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/initAddress.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="nonce" content="{{ nonce }}">
+
+        <!-- http://getbootstrap.com/docs/5.3/ -->
+        <!-- Theme by Bootswatch: https://bootswatch.com/ -->
+        <link nonce='{{ nonce }}' href="/static/css/bootstrap.css" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+        <link rel="manifest" href="/static/images/site.webmanifest">
+
+        <link nonce='{{ nonce }}' href="/static/css/styles.css" rel="stylesheet">
+
+        <script nonce="{{ nonce }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+        <style nonce='{{ nonce }}'></style>
+
+
+        <title>Preppy: {% block title %}{% endblock %}</title>
+
+    </head>
+
+    <body>
+        <!-- Set style nonce for Google API -->
+
+        <nav class="navbar navbar-expand-lg sticky-top bg-primary" data-bs-theme="dark">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <li class="nav-item"><a class="navbar-brand" href="#">Preppy</a></li>
+                        {% if session["user_id"] %}
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/family">Household</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">To-Do List</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/tasks">Create</a></li>
+                                    <li><a class="dropdown-item" href="/customtasks">Your Tasks</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">Go-Bag</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/buildgobag">Build</a></li>
+                                    <li><a class="dropdown-item" href="/gobag">Fill</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">Shelter-in-Place</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/shelter">Build</a></li>
+                                    <li><a class="dropdown-item" href="/stockshelter">Stock</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" href="#">Medical</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/medical">Your Information</a></li>
+                                    <li><a class="dropdown-item" href="/providers">Your Providers</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/contacts">Emergency Contacts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/evacuation">Meet-Up Locations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/routines">Routine Schedules</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/uploads">Secure Documents</a>
+                            </li>
+                            </ul>
+                            <ul class="navbar-nav ms-auto mt-2">
+                                <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                            </ul>
+                        {% else %}
+                            <ul class="navbar-nav ms-auto mt-2">
+                                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                            </ul>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container py-5">
+
+            <!-- Flash messages modal -->
+            <div id="flashModal" class="modal" tabindex="-1">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary">
+                            <h5 class="modal-title">Notification</h5>
+                            <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="flashMessages" data-messages='{{ get_flashed_messages() | tojson }}'>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/layout.js') }}"></script>
+
+            {% block main %}{% endblock %}
+        </main>
+
+        <footer class="mb-5">
+
+        </footer>
+    </body>
+
+</html>

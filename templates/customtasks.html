@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ last_name }} To-Do List
+{% endblock %}
+
+{% block main %}
+    <h1 class="print-only">{{ last_name }} To-Do List</h1>
+    <p class="lead no-print">Here is your customized task list. As you complete each task, check it off, and don't forget to save your progress!</p>
+
+
+<!-- Checklist of chosen tasks with delete option -->
+    <form action="/tasksave" method="post" class="my-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="id" value="save">
+        <div class="row row-cols-md-2 row-cols-xl-3 row-gap-2 mb-2 print-only">
+            {% for uuid, details in tasks_checked.items() %}
+                <div class="form-check">
+                    <input class="form-check-input task" type="checkbox" value="{{ uuid }}" {% if details.done %}checked{% endif %} name="task" id="{{ details.task_name }}">
+                    <label class="form-check-label" for="{{ details.task_name }}">{{ details.task_name|replace("_", " ") }}</label>
+                    <button class="btn btn-outline-danger btn-sm btn-delete no-print" data-task-uuid="{{ uuid }}">x</button>
+                </div>
+            {% endfor %}
+        </div>
+
+    <!-- Save Button -->
+        <button class="mt-2 btn btn-primary no-print">Save Progress</button>
+    </form>
+
+<!-- Print button -->
+    <button class="btn btn-info no-print btn-print">Print</button>
+
+<!-- Form to add custom tasks -->
+    <div class="my-2 no-print">
+        <form class="p-2 border border-info w-auto rounded d-inline-block" action="/customadd" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="id" value="custom">
+            <h5>Add custom task:</h5>
+            <div class="form-group row">
+                <div class="col">
+                    <input class="form-control" id="custom_task" name="custom_task" type="text" placeholder="Name task" required>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Add Task</button>
+        </form>
+    </div>
+
+<!-- Script for delete buttons -->
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/customTasks.js') }}"></script>
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/print.js') }}"></script>
+
+{% endblock %}

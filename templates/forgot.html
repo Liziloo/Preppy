@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Forgot Password
+{% endblock %}
+
+{% block main %}
+    <form class="text-center" action="/forgot" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Email" type="email" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Email Token</button>
+    </form>
+{% endblock %}

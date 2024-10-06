@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your To-Do List
+{% endblock %}
+
+{% block main %}
+    <h1>Create Your To-Do List</h1>
+    <p class="lead">We've selected some emergencies based on what the <a href="https://www.redcross.org/get-help/how-to-prepare-for-emergencies/common-natural-disasters-across-us.html">American Red Cross</a> suggests is most likely in your region, but feel free to customize based on situations you believe you're most likely to face. Once you've selected all the situations you'd like to prepare for, click "Save" to store your selections. You'll then be taken to a page where you can keep track of tasks you've accomplished.</p>
+
+    <div class="container">
+    <!-- Checkboxes for situations you'd like to be prepared for -->
+        <h3 class="my-3">Possible Disaster Types</h3>
+        <div class="row row-cols-md-3 row-cols-lg-4 row-gap-1">
+            {% for sit, sit_info in sits.items() %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input disaster" type="checkbox" id="{{ sit }}" {% if sit_info['checked'] %}checked{% endif %} data-tasks="{{ sit_info['tasks']|join(', ')}}">
+                    <label class="form-check-label" for="{{ sit }}">{{ sit|replace("_", " ") }}</label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="container">
+    <!-- Checklist generated based on family information with option to add or delete items. -->
+        <h3 class="my-3">Suggested Tasks</h3>
+        <form class="mb-3" action="/posttasks" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row row-cols-md-2 row-cols-xl-3 row-gap-2 mb-2">
+                {% for task in tasks %}
+                    <div class="form-check form-switch">
+                        <input class="form-check-input task" type="checkbox" value="{{ task }}" {% if is_saved %}checked{% endif %} name="task" id="{{ task }}">
+                        <label class="form-check-label" for="{{ task }}">{{ task|replace("_", " ") }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mt-3">
+                <p class="text-danger">Caution! If you've already started working on a previous task list, clicking "Save" will clear all your progress.</p>
+                <button class="btn btn-primary" id="save">Save</button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+{% endblock %}

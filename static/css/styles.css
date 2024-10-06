@@ -1,0 +1,92 @@
+@media print {
+    * {
+        font-family: serif;
+    }
+
+    @page {
+        size: landscape;
+        margin: 0.5in;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .no-print,
+    .no-print * {
+        display: none;
+    }
+
+    .table-responsive {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+    }
+
+    th, td {
+        word-wrap: break-word;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .col-auto {
+        box-sizing: border-box;
+        padding: 5px;
+    }
+}
+
+@media print and (orientation: portrait) {
+    .col-auto {
+        flex: 0 0 50%;
+    }
+}
+
+#map {
+    height: 75%;
+}
+
+#evac_map {
+    height: 75vh;
+}
+
+#index {
+    text-align: left;
+}
+
+.form-check-input {
+    border: 1px solid var(--bs-danger);
+}
+
+#flashModal {
+    position: fixed;
+    top: 25vh;
+}
+
+.btn-delete {
+    border-color: white;
+    padding: 0;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+}
+
+
+.table-primary {
+    --bs-table-striped-color: #111;
+}
+
+.cell-button {
+    width: 50px;
+}

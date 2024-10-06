@@ -1,0 +1,6 @@
+.env
+node_modules/
+preppy.tar
+global.env
+keyfile
+preppy.db

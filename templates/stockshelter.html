@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ last_name }} Shelter
+{% endblock %}
+
+{% block main %}
+    <h1>{{ last_name }} Customized Shelter-in-Place Kit</h1>
+    <p class="lead no-print">Check off items as you acquire them and add them to your real-life supplies. Save your progress.</p>
+
+<!-- Supply checklist -->
+    <form action="/poststock" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="id" value="save">
+        <div class="row row-cols-md-3 row-cols-lg-4 row-gap-1">
+            {% for uuid, details in supplies_checked.items() %}
+                <div class="col-auto form-check">
+                    <input class="form-check-input supply" type="checkbox" value="{{ uuid }}" {% if details.done %}checked{% endif %} name="supply" id="{{ details.supply_name }}">
+                    <label class="form-check-label" for="{{ details.supply_name }}">{{ details.supply_name|replace("_", " ") }}</label>
+                    <button class="btn btn-outline-danger btn-sm btn-delete no-print" data-supply-uuid="{{ uuid }}">x</button>
+                </div>
+            {% endfor %}
+        </div>
+
+    <!-- Save button -->
+        <button class="my-2 btn btn-primary no-print" id="save">Save Progress</button>
+    </form>
+
+<!-- Print button -->
+    <button class="btn btn-info no-print btn-print">Print</button>
+
+<!-- Form to add custom supplies -->
+    <div class="my-2 no-print">
+        <form class="p-2 border border-info w-auto rounded d-inline-block" action="/customstock" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="id" value="custom">
+            <h5>Add custom supply:</h5>
+            <div class="form-group row">
+                <div class="col">
+                    <input class="form-control" id="custom_supply" name="custom_supply" type="text" placeholder="Name supply" required>
+                </div>
+            </div>
+            <button class="my-2 btn btn-primary" type="submit">Add Supply</button>
+        </form>
+    </div>
+
+<!-- Script for delete buttons -->
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/print.js') }}"></script>
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/stockShelter.js') }}"></script>
+
+{% endblock %}

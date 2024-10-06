@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your Evacuation Plans
+{% endblock %}
+
+{% block main %}
+    <h1>{{ last_name }} Meet-Up Locations</h1>
+    <div class="no-print">
+        <p class="lead">The <a target="_blank" href="https://www.redcross.org/get-help/how-to-prepare-for-emergencies/make-a-plan.html">American Red Cross</a> suggests designating two locations to meet up should you be separated during an emergency:
+            <ul>
+                <li>Right outside your home</li>
+                <li>Somewhere outside your neighborhood, should the neighborhood be unsafe</li>
+            </ul>
+        </p>
+        <p class="lead">Of course, you may wish to choose more than two locations. You can save as many as you like.</p>
+
+        <p class="lead">Enter a location in the search bar below the map to zoom in on that location. Left-click on the map to add a pin. Double-click on any pin to add a location name. Delete pins by right-clicking on them. Remember to save your pins when you're finished and print out the locations in case of an emergency.</p>
+    </div>
+
+    <div id="evac_map" class="my-3 no-print"></div>
+
+    <div class="mb-2 no-print">
+        <input type="text" id="address-search" placeholder="Search address">
+    </div>
+
+    <button class="btn btn-primary mb-2 no-print" id="save">Save Pins</button>
+
+    <table id="address-table" class="table table-primary table-striped table-hover table-bordered border-secondary">
+    </table>
+
+    <button class="btn btn-info no-print btn-print">Print</button>
+
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/print.js') }}"></script>
+
+<!-- Load Google Maps Javascript API -->
+    <div id="api-key" data-key="{{ api_key }}"></div>
+    <script nonce="{{ nonce }}">
+        const apiKey = "{{ api_key }}";
+        const pins = {{ pins | tojson }};
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/mapsApi.js') }}"></script>
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/evacmap.js') }}"></script>
+<!-- Load address javascript -->
+    <script nonce="{{ nonce }}" src="{{ url_for('static', filename='js/initAddress.js') }}"></script>
+{% endblock %}
