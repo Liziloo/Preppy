@@ -40,7 +40,7 @@ The Preppy app docker image is created using the [Dockerfile](./Dockerfile) and 
 4. Rename example.env to simply .env
 4. Run docker-compose up within the repository to start the app
 
-My intention is to upload an image to DockerHub. When I've done that, the user would no longer need to clone the repository, but instead simply run the app using a docker compose file and .env file. But since I've never made a public docker image before, right now my image is private on DockerHub.
+Alternatively, there is now a container image of preppy connected to this repository. Run the app using a docker compose file and .env file. I've never made a public docker image before, so please let me know of any issues.
 
 ### License
 
